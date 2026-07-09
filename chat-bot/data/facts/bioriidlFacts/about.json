@@ -1,0 +1,32 @@
+{
+  "summary": "Bioriidl is a bio incubator supporting early-stage startups working at the intersection of biology, health, and deep tech. It provides founders with space, tools, mentoring, and community to transform research-driven concepts into scalable ventures.",
+  "mission": "From idea to impact — accelerate innovation from prototype to real-world impact through lab access, business support, and peer-learning.",
+  "what_we_enable": [
+    "Lab and infrastructure access",
+    "Startup-friendly workspace with 24/7 access for incubated startups",
+    "Guidance from experts and mentors",
+    "Connection to the riidl ecosystem"
+  ],
+  "infrastructure_via_riidl": [
+    "Dedicated desk space / cabin",
+    "High speed WiFi",
+    "Meeting rooms and conference rooms",
+    "Lockers, sports facilities, and cafeteria",
+    "Digital fabrication facilities",
+    "D.I.Y. Bio Lab"
+  ],
+  "community": {
+    "description": "Founders join a collaborative network of innovators, researchers, mentors, and industry partners with knowledge-sharing, co-creation, and a culture of openness and experimentation.",
+    "benefits": [
+      "Peer learning",
+      "Mentor network",
+      "Industry connects",
+      "Founder meetups",
+      "Workshops and talks"
+    ],
+    "partner_platform": {
+      "name": "Darwin",
+      "description": "Enhances startup visibility and discovery, connecting teams to resources, collaborators, and networks across Bioriidl and riidl"
+    }
+  }
+}

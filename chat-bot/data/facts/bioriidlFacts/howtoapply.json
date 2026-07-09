@@ -1,0 +1,22 @@
+{
+  "incubation_application": {
+    "how_to_apply": "Apply via https://www.bioriidl.org",
+    "eligibility_criteria": [
+      "<e.g. domain: biotech, agrobiotech, healthcare, food, etc.>",
+      "<e.g. stage: idea, prototype, or revenue-generating>",
+      "<e.g. team size or composition requirement, if any>"
+    ],
+    "required_documents": [
+      "<e.g. business plan / pitch deck>",
+      "<e.g. team bios>"
+    ],
+    "steps": [
+      "<step 1, e.g. submit online application form>",
+      "<step 2, e.g. shortlisting / screening>",
+      "<step 3, e.g. interview or pitch presentation>",
+      "<step 4, e.g. final decision and onboarding>"
+    ]
+  },
+  "lab_booking": "Book riidl lab facilities via https://riidl.org/booking",
+  "ibsc_clearance": "Submit IBSC application forms at least 30 days before scheduled meetings — see https://www.bioriidl.org/ibsc"
+}

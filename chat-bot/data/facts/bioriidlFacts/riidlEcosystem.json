@@ -1,0 +1,11 @@
+{
+  "summary": "Bioriidl operates within the riidl (Research Innovation Incubation Design Laboratory) ecosystem at Somaiya Vidyavihar University, Mumbai — providing broader incubation, labs, and startup support beyond bio-specific programs.",
+  "riidl_labs": [
+    { "name": "Fabrication Lab (FABLAB)", "description": "MIT-supported fabrication space with 3D printers and precision machines for prototyping" },
+    { "name": "Media Lab", "description": "Multimedia production tools for content creation and editing" },
+    { "name": "AI/ML Lab", "description": "Advanced computing resources for artificial intelligence and machine learning research" },
+    { "name": "AR/VR Lab", "description": "Augmented and virtual reality tools for immersive digital experiences" },
+    { "name": "Bio Lab", "description": "BIRAC-supported life sciences lab for biology, genetics, and biotechnology research (connected to Bioriidl DIY Biolab)" }
+  ],
+  "facility_booking": "Labs can be booked via https://riidl.org/booking for students, faculty, startups, riidl staff, and lab members"
+}

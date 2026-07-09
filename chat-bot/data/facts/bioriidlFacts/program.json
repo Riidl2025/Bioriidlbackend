@@ -1,0 +1,31 @@
+{
+  "summary": "Cohorts, bootcamps, and hands-on academy courses — technical, regulatory, and market training designed for science-first founders with focus on lab-readiness, safety, and real-world deployment.",
+  "featured": {
+    "name": "Startup School India",
+    "description": "A national initiative bringing founders together for practical sessions, mentorship, and community-driven growth. Ideal for early-stage teams seeking peer feedback and investor-ready preparation."
+  },
+  "offerings": [
+    {
+      "name": "Startup Bootcamp Program",
+      "description": "Intensive hands-on sprint for early-stage teams covering rapid prototyping, customer validation, demo-day preparation, product development, business development, and lab-readiness."
+    },
+    {
+      "name": "Bio Entrepreneurship Program (BEP)",
+      "description": "Cohort-based program for bio founders blending regulation, lab practices, fundraising readiness, and go-to-market guidance."
+    },
+    {
+      "name": "Bio Academy",
+      "description": "Short modular courses on lab methods, safety, and bioinformatics for founders and researchers."
+    },
+    {
+      "name": "Bio Informatics",
+      "description": "Workshops and practical training on bioinformatics workflows, data analysis, and building web tools for biological data."
+    },
+    {
+      "name": "Startup School India",
+      "description": "Community-led learning and mentoring with session series and peer cohorts connecting founders with mentors."
+    }
+  ],
+  "collaborators": ["Somaiya Trust"],
+  "partners": ["Start-Up Chile"]
+}

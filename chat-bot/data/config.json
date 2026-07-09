@@ -1,0 +1,4 @@
+{
+  "retrieval_limit": 5,
+  "similarity_threshold": 0.35
+}

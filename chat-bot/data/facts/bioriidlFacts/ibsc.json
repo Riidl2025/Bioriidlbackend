@@ -1,0 +1,40 @@
+{
+  "full_name": "Institutional Biosafety Committee (IBSC)",
+  "summary": "Regulatory oversight for research involving genetically engineered organisms, hazardous microorganisms, and recombinant DNA.",
+  "registration": "Registered and accredited under DBT (Department of Biotechnology), Ministry of Science and Technology, Government of India — RIIDL Foundation IBSC",
+  "regulatory_framework": {
+    "governing_rules": "Rules for Manufacture, Use, Import, Export and Storage of Hazardous Microorganisms, Genetically Engineered Organisms or Cells, 1989 (Rules 1989) under the Environment (Protection) Act, 1986 (MoEF&CC)",
+    "scope": "Covers manufacture, import, research, and release of Genetically Engineered Organisms (GEOs) and hazardous microorganisms",
+    "responsibilities": [
+      "Review and grant clearance for restricted-category GMO, LMO, and rDNA research proposals",
+      "Formulate biosafety programs and conduct onsite evaluations",
+      "Monitor research facilities for adherence to biosafety guidelines",
+      "Oversee regulatory process, update PIs on approvals/rejections",
+      "Assess field experiments and review emergency plans"
+    ]
+  },
+  "committee_members": [
+    { "name": "Ms Bhavna Pandya", "role": "Chairperson", "expertise": "Microbiology & Synthetic Biology", "affiliation": "Bioriidl Head, RIIDL Foundation" },
+    { "name": "Dr Vainav Patel", "role": "DBT Nominee", "expertise": "Biochemistry & Virology", "affiliation": "Scientist E & Head, ICMR-NIRRH" },
+    { "name": "Ms Apekshakumari Patel", "role": "Member Secretary", "expertise": "Microbiology & Synthetic Biology", "affiliation": "Research Assistant, RIIDL Foundation" },
+    { "name": "Dr Jyotirlatha Bangera", "role": "Biosafety Officer", "expertise": "Medicine", "affiliation": "Professor & Head of Department, K. J. Somaiya Medical College" },
+    { "name": "Dr Deepak Modi", "role": "External Expert", "expertise": "Genetics", "affiliation": "Scientist F, ICMR-NIRRH" },
+    { "name": "Dr Maithili Athavale", "role": "External Expert", "expertise": "Cancer Biology", "affiliation": "Assistant General Manager R&D, Godavari Biorefineries" },
+    { "name": "Dr Seema Sambrani", "role": "Internal Expert", "expertise": "Biotechnology", "affiliation": "Assistant Director, SK Somaiya College" },
+    { "name": "Dr Lolly Jain", "role": "Internal Expert", "expertise": "Microbiology", "affiliation": "Vice Principal, K. J. Somaiya College of Science and Commerce" },
+    { "name": "Dr Kafil Ahmed", "role": "Internal Expert", "expertise": "Biotechnology", "affiliation": "Chief Scientific Officer, Techinvention Lifecare Pvt Ltd" }
+  ],
+  "application_process": {
+    "steps": [
+      "Download the application form from the IBSC Protocol Form link on the website",
+      "Submit hard copy to Member Secretary, RIIDL Foundation, and soft copy via email to bhavna.pandya@somaiya.edu (CC: apekshakumari@somaiya.edu)",
+      "Submit at least 30 days prior to scheduled IBSC meetings",
+      "Principal Investigators must inform IBSC of rDNA, GMO, or LMO work before applying for external grants"
+    ],
+    "selection_process": [
+      "IBSC schedules a meeting and informs applicant at least 15 days in advance",
+      "Applicant presents the proposal during the IBSC meeting",
+      "Decision communicated within one week after the meeting"
+    ]
+  }
+}
