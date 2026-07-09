@@ -7,9 +7,9 @@ const express = require("express");
 const cors= require('cors');
 
 const contactRoutes = require('./routes/contact.routes');
-const chatRoutes = require('./chat-bot/routes/chatRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 const sendEmail = require('./utils/sendEmail');
-const { runFullSync } = require('./chat-bot/services/syncService');
+const { runFullSync } = require('./services/syncService');
 
 const app = express();
 
