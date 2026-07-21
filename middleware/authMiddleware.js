@@ -23,8 +23,3 @@ const protect = async (req, res, next) => {
 };
 
 module.exports = { protect };
-
-// Authentication middleware for protecting private routes.
-// It checks for a JWT token in the browser's cookies.
-// If the token is valid, the corresponding user's details are fetched from the database (excluding the password) and attached to req.user.
-// If the token is missing, invalid, or the user doesn't exist, a 401 Unauthorized response is returned and access is denied.

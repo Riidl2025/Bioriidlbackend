@@ -12,9 +12,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const sendEmail = require('./utils/sendEmail');
 const { runFullSync } = require('./services/syncService');
 const authRoutes = require('./routes/authRoutes');
-
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
 
 connectDB();
 
@@ -34,14 +32,12 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/contact', contactRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/auth', authRoutes);
 
-app.use(cookieParser());
-
-app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 8000;
 
