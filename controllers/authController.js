@@ -13,7 +13,7 @@ const sendTokenCookie = (res, token) => {
   res.cookie("token", token, {
     httpOnly: true, // JS on the frontend can't read/steal this cookie
     secure: process.env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: "strict", // blocks the cookie being sent on cross-site requests
+    sameSite: "lax",
     maxAge: 10 * 365 * 24 * 60 * 60 * 1000, // 10yrs, matches JWT expiry
   });
 };
