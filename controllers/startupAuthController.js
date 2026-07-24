@@ -1,11 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { OAuth2Client } = require("google-auth-library");
 const { sendOtpEmail } = require('../services/otpService');
 const otpStorage = new Map();
 
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 //generating the token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "10y" });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 // Sets the JWT as an httpOnly cookie on the response
@@ -14,7 +17,8 @@ const sendTokenCookie = (res, token) => {
     httpOnly: true, // JS on the frontend can't read/steal this cookie
     secure: process.env.NODE_ENV === "production", // HTTPS only in production
     sameSite: "lax",
-    maxAge: 10 * 365 * 24 * 60 * 60 * 1000, // 10yrs, matches JWT expiry
+    maxAge:  60 * 60 * 1000, // 1 hour in milliseconds
+
   });
 };
 
@@ -92,6 +96,56 @@ const login = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+};
+
+
+// @desc    Authenticate with a Google ID token
+// @route   POST /api/auth/google
+// @access  Public
+const googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: "Missing Google credential" });
+    }
+
+    //Verify the Google Token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    //Get User Information eg { email : "..." , name : "..." , sub: googleId}
+    const payload = ticket.getPayload();
+    const { email, name, sub: googleId } = payload;
+
+    //checks if user exists
+    let user = await User.findOne({ email });
+
+    //if user does not exist creating user
+    if (!user) {
+      user = await User.create({ name, email, googleId });
+    } 
+    //Existing Email but No Google ID-user exists ,did normal signup but now trying to login with google
+    else if (!user.googleId) {
+      user.googleId = googleId;
+      await user.save();
+    }
+
+    //Generate JWT Token
+    const token = generateToken(user._id);
+    //Store the JWT in Cookies
+    sendTokenCookie(res, token);
+
+    //Send User Information to frontend
+    return res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (error) {
+    return res.status(401).json({ message: "Google authentication failed" });
   }
 };
 
@@ -227,6 +281,7 @@ const forgotPassword = async (req, res) => {
 module.exports = {
   signup,
   login,
+  googleLogin,
   logout,
   getProfile,
   updateProfile,

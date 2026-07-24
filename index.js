@@ -11,9 +11,9 @@ const contactRoutes = require('./routes/contact.routes');
 const chatRoutes = require('./routes/chatRoutes');
 const sendEmail = require('./utils/sendEmail');
 const { runFullSync } = require('./services/syncService');
-const authRoutes = require('./routes/authRoutes');
+const startupAuthRoutes = require('./routes/startupAuthRoutes');
 const dealRoutes = require('./routes/dealRoutes');
-const connectDB = require('./config/db');
+const connectDB = require('./config/startupDB');
 
 connectDB();
 
@@ -37,7 +37,7 @@ app.use(cookieParser());
 
 app.use('/api/contact', contactRoutes);
 app.use('/api', chatRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', startupAuthRoutes);
 app.use('/api/deals', dealRoutes);
 
 
