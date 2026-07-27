@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ClaimLog = require('../models/ClaimLog'); 
-const { protect } = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/startupAuthMiddleware');
 
 router.post('/claim', protect, async (req, res) => {
   try {
