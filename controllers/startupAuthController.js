@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { OAuth2Client } = require("google-auth-library");
-const { sendOtpEmail } = require('../services/otpService');
+const { sendOtpEmail } = require("../services/otpService");
 const otpStorage = new Map();
+const pendingSignups = new Map(); // email -> { name, password, otp, expiresAt }
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -17,50 +18,106 @@ const sendTokenCookie = (res, token) => {
     httpOnly: true, // JS on the frontend can't read/steal this cookie
     secure: process.env.NODE_ENV === "production", // HTTPS only in production
     sameSite: "lax",
-    maxAge:  60 * 60 * 1000, // 1 hour in milliseconds
-
+    maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
   });
 };
 
-// @desc    Register a new user
+// @desc    Register a new user (via OTP verification)
 // @route   POST /api/auth/signup
 // @access  Public
 const signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please fill all fields" });
+    const { step, name, email, password, otp } = req.body;
+ 
+    if (step === "request") {
+      if (!name || !email || !password) {
+        return res.status(400).json({ message: "Please fill all fields" });
+      }
+ 
+      if (password.length < 6) {
+        return res.status(409).json({
+          message: "Password must be at least 6 characters",
+        });
+      }
+ 
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        return res
+          .status(409)
+          .json({ message: "User already exists", redirectTo: "/login" });
+      }
+ 
+      // Block rapid resends — same email, same cooldown, whether this is
+      // the first send or a "Resend OTP" click (both hit this same branch).
+      const RESEND_COOLDOWN_MS = 30 * 1000;
+      const existingPending = pendingSignups.get(email);
+      if (existingPending && Date.now() - existingPending.lastSentAt < RESEND_COOLDOWN_MS) {
+        const secondsLeft = Math.ceil(
+          (RESEND_COOLDOWN_MS - (Date.now() - existingPending.lastSentAt)) / 1000
+        );
+        return res.status(429).json({
+          message: `Please wait ${secondsLeft}s before requesting another OTP`,
+          secondsLeft,
+        });
+      }
+ 
+      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      pendingSignups.set(email, {
+        name,
+        password, // stored plain in memory only, temporarily — never saved to DB unverified
+        otp: generatedOtp,
+        expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
+        lastSentAt: Date.now(),
+      });
+ 
+      await sendOtpEmail(email, generatedOtp);
+      return res.status(200).json({ message: "OTP sent to your email" });
     }
-
-    if (password.length < 6) {
-      return res.status(409).json({
-        message: "Password must be at least 6 characters",
+ 
+    else if (step === "verify") {
+      if (!email || !otp) {
+        return res.status(400).json({ message: "Email and OTP are required" });
+      }
+ 
+      const pending = pendingSignups.get(email);
+      if (!pending) {
+        return res.status(400).json({ message: "No pending signup found. Please sign up again." });
+      }
+ 
+      if (Date.now() > pending.expiresAt) {
+        pendingSignups.delete(email);
+        return res.status(400).json({ message: "OTP expired. Please sign up again." });
+      }
+ 
+      if (pending.otp !== otp) {
+        return res.status(400).json({ message: "Invalid OTP" });
+      }
+ 
+      const user = await User.create({
+        name: pending.name,
+        email,
+        password: pending.password, // hashed automatically by the pre-save hook
+      });
+      pendingSignups.delete(email);
+ 
+      const token = generateToken(user._id);
+      sendTokenCookie(res, token);
+ 
+      return res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
       });
     }
-
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res
-        .status(409)
-        .json({ message: "User already exists", redirectTo: "/login" });
+ 
+    else {
+      return res.status(400).json({ message: "Invalid step provided" });
     }
-
-    const user = await User.create({ name, email, password });
-
-    const token = generateToken(user._id);              
-    sendTokenCookie(res, token);                        
-
-    return res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
-
+ 
 // @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
@@ -99,7 +156,6 @@ const login = async (req, res) => {
   }
 };
 
-
 // @desc    Authenticate with a Google ID token
 // @route   POST /api/auth/google
 // @access  Public
@@ -126,7 +182,7 @@ const googleLogin = async (req, res) => {
     //if user does not exist creating user
     if (!user) {
       user = await User.create({ name, email, googleId });
-    } 
+    }
     //Existing Email but No Google ID-user exists ,did normal signup but now trying to login with google
     else if (!user.googleId) {
       user.googleId = googleId;
@@ -228,35 +284,37 @@ const forgotPassword = async (req, res) => {
   try {
     const { email, otp, step, newPassword } = req.body;
 
-    if (step === 'request') {
+    if (step === "request") {
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(404).json({ message: 'User with this email does not exist' });
+        return res
+          .status(404)
+          .json({ message: "User with this email does not exist" });
       }
 
-      const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      const generatedOtp = Math.floor(
+        100000 + Math.random() * 900000,
+      ).toString();
       otpStorage.set(email, generatedOtp);
-      
+
       await sendOtpEmail(email, generatedOtp);
-      return res.status(200).json({ message: 'OTP sent successfully' });
-    } 
-    
-    else if (step === 'verify') {
+      return res.status(200).json({ message: "OTP sent successfully" });
+    } else if (step === "verify") {
       if (otpStorage.get(email) === otp) {
-        return res.status(200).json({ success: true, message: 'OTP verified' });
+        return res.status(200).json({ success: true, message: "OTP verified" });
       } else {
-        return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        return res.status(400).json({ success: false, message: "Invalid OTP" });
       }
-    } 
-    
-    else if (step === 'reset') {
+    } else if (step === "reset") {
       if (!newPassword || newPassword.length < 6) {
-        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+        return res
+          .status(400)
+          .json({ message: "Password must be at least 6 characters" });
       }
 
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ message: "User not found" });
       }
 
       // Assigning plain password. Mongoose schema pre('save') hook will automatically hash it.
@@ -266,15 +324,18 @@ const forgotPassword = async (req, res) => {
       // Clean up OTP from memory storage after successful reset
       otpStorage.delete(email);
 
-      return res.status(200).json({ success: true, message: 'Password updated successfully in database' });
-    } 
-    
-    else {
-      return res.status(400).json({ error: 'Invalid step provided' });
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: "Password updated successfully in database",
+        });
+    } else {
+      return res.status(400).json({ error: "Invalid step provided" });
     }
   } catch (error) {
     console.error("Forgot password error:", error);
-    return res.status(500).json({ message: error.message || 'Server error' });
+    return res.status(500).json({ message: error.message || "Server error" });
   }
 };
 
